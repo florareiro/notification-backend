@@ -12,4 +12,16 @@ export const createNotificationSchema = z.object({
     .min(3, "O campo 'message' deve conter no mínimo 3 caracteres."),
 });
 
-export type CreateNotificationInput = z.infer<typeof createNotificationSchema>;
+export type CreateNotificationValidation = z.infer<
+  typeof createNotificationSchema
+>;
+
+export const listNotificationsSchema = z.object({
+  userId: z.string({ error: "O campo 'userId' é obrigatório." }),
+  page: z.coerce.number().int().positive().default(1),
+  limit: z.coerce.number().int().positive().max(100).default(10),
+});
+
+export type ListNotificationsValidation = z.infer<
+  typeof listNotificationsSchema
+>;

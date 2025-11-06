@@ -11,4 +11,15 @@ export const NotificationController = {
       next(err);
     }
   },
+
+  async list(req: Request, res: Response, next: NextFunction) {
+    try {
+      const result = await NotificationService.listNotifications(
+        req.query as any
+      );
+      res.json({ success: true, ...result });
+    } catch (err) {
+      next(err);
+    }
+  },
 };

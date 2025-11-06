@@ -25,3 +25,27 @@ function formatZodErrors(error: ZodError) {
   }
   return errors;
 }
+
+export function validateQuery(schema: ZodSchema<any>) {
+  return (req: Request, _res: Response, next: NextFunction) => {
+    const result = schema.safeParse(req.query);
+    if (!result.success) {
+      const errors: Record<string, string> = {};
+      for (const issue of result.error.issues) {
+        const path = issue.path.join(".") || "query";
+        errors[path] = issue.message;
+      }
+      return next(
+        new ApiError(
+          400,
+          "Erro de validação nos parâmetros de consulta",
+          errors
+        )
+      );
+    }
+
+    // ✅ Corrigido: não sobrescreve o getter
+    Object.assign(req.query, result.data);
+    next();
+  };
+}
