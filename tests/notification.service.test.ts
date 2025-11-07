@@ -57,3 +57,17 @@ test("lista notificações paginadas por usuário", async () => {
   expect(page1.total).toBe(15);
   expect(page1.pages).toBe(2);
 });
+
+test("marca uma notificação como lida", async () => {
+  const notif = (await NotificationService.createNotification({
+    userId: "user-test-read",
+    title: "Notificação não lida",
+    message: "Mensagem teste",
+  })) as any;
+
+  expect(notif.read).toBe(false);
+
+  const updated = await NotificationService.markAsRead(notif._id.toString());
+
+  expect(updated.read).toBe(true);
+});

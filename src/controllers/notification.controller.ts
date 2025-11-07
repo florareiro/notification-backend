@@ -22,4 +22,14 @@ export const NotificationController = {
       next(err);
     }
   },
+
+  async markRead(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params as { id: string };
+      const updated = await NotificationService.markAsRead(id);
+      res.json({ success: true, data: updated });
+    } catch (err) {
+      next(err);
+    }
+  },
 };

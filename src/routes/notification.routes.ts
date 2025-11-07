@@ -3,20 +3,26 @@ import { NotificationController } from "../controllers/notification.controller";
 import {
   createNotificationSchema,
   listNotificationsSchema,
+  markAsReadParamsSchema,
 } from "../validators/notification.validator";
-import { validateBody, validateQuery } from "../middlewares/validate";
+import { validate } from "../middlewares/validate";
 
 const router = Router();
 
 router.post(
   "/",
-  validateBody(createNotificationSchema),
+  validate({ body: createNotificationSchema }),
   NotificationController.create
 );
 router.get(
   "/",
-  validateQuery(listNotificationsSchema),
+  validate({ query: listNotificationsSchema }),
   NotificationController.list
+);
+router.patch(
+  "/:id/read",
+  validate({ params: markAsReadParamsSchema }),
+  NotificationController.markRead
 );
 
 export default router;

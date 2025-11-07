@@ -27,7 +27,7 @@ export const NotificationService = {
       NotificationModel.countDocuments(filter),
     ]);
 
-    if (total === 0) {
+    if (total < 1) {
       throw new ApiError(
         404,
         `Nenhuma notificação encontrada para o usuário '${userId}'.`
@@ -41,5 +41,22 @@ export const NotificationService = {
       limit,
       pages: Math.ceil(total / limit),
     };
+  },
+
+  async markAsRead(id: string) {
+    const notification = await NotificationModel.findById(id);
+
+    if (!notification || notification.deletedAt) {
+      throw new ApiError(404, "Notificação não encontrada.");
+    }
+
+    if (notification.read) {
+      return notification;
+    }
+
+    notification.read = true;
+    await notification.save();
+
+    return notification;
   },
 };
