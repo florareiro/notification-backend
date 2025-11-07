@@ -15,6 +15,10 @@ export function errorHandler(
     });
   }
 
-  console.error(err);
-  res.status(500).json({ success: false, message: "Erro interno do servidor" });
+  console.error("Erro inesperado:", err);
+
+  return res.status(500).json({
+    success: false,
+    message: "Erro interno do servidor",
+  });
 }

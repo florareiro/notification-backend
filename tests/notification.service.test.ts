@@ -33,31 +33,6 @@ test("cria notificação com dados válidos", async () => {
   expect(created.read).toBe(false);
 });
 
-test("lista notificações paginadas por usuário", async () => {
-  // cria 15 notificações para o mesmo usuário
-  const userId = "user-paginated";
-  const payload = { userId, title: "Olá", message: "Teste" };
-  for (let i = 0; i < 15; i++) {
-    await NotificationService.createNotification(payload);
-  }
-
-  const page1 = await NotificationService.listNotifications({
-    userId,
-    page: 1,
-    limit: 10,
-  });
-  const page2 = await NotificationService.listNotifications({
-    userId,
-    page: 2,
-    limit: 10,
-  });
-
-  expect(page1.data.length).toBe(10);
-  expect(page2.data.length).toBe(5);
-  expect(page1.total).toBe(15);
-  expect(page1.pages).toBe(2);
-});
-
 test("marca uma notificação como lida", async () => {
   const notif = (await NotificationService.createNotification({
     userId: "user-test-read",

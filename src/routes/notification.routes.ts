@@ -3,7 +3,7 @@ import { NotificationController } from "../controllers/notification.controller";
 import {
   createNotificationSchema,
   listNotificationsSchema,
-  markAsReadParamsSchema,
+  idParamsSchema,
 } from "../validators/notification.validator";
 import { validate } from "../middlewares/validate";
 
@@ -21,8 +21,13 @@ router.get(
 );
 router.patch(
   "/:id/read",
-  validate({ params: markAsReadParamsSchema }),
+  validate({ params: idParamsSchema }),
   NotificationController.markRead
+);
+router.patch(
+  "/:id",
+  validate({ params: idParamsSchema }),
+  NotificationController.remove
 );
 
 export default router;

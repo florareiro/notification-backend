@@ -26,6 +26,6 @@ export type ListNotificationsValidation = z.infer<
   typeof listNotificationsSchema
 >;
 
-export const markAsReadParamsSchema = z.object({
+export const idParamsSchema = z.object({
   id: z.string({ error: "O parâmetro 'id' é obrigatório." }),
 });

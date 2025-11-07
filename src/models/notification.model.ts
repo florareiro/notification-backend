@@ -1,6 +1,8 @@
 import { Schema, model, Document } from "mongoose";
+import { v4 as uuidv4 } from "uuid";
 
 export interface INotification extends Document {
+  id: string;
   userId: string;
   title: string;
   message: string;
@@ -11,7 +13,13 @@ export interface INotification extends Document {
 
 const NotificationSchema = new Schema<INotification>(
   {
-    userId: { type: String, required: true, index: true },
+    id: {
+      type: String,
+      default: uuidv4,
+      unique: true,
+      index: true,
+    },
+    userId: { type: String, required: true },
     title: { type: String, required: true },
     message: { type: String, required: true },
     read: { type: Boolean, default: false },

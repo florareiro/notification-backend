@@ -44,18 +44,29 @@ export const NotificationService = {
   },
 
   async markAsRead(id: string) {
-    const notification = await NotificationModel.findById(id);
+    const notification = await NotificationModel.findOneAndUpdate(
+      { id, deletedAt: null },
+      { $set: { read: true } },
+      { new: true }
+    );
 
-    if (!notification || notification.deletedAt) {
+    if (!notification) {
       throw new ApiError(404, "Notificação não encontrada.");
     }
 
-    if (notification.read) {
-      return notification;
-    }
+    return notification;
+  },
 
-    notification.read = true;
-    await notification.save();
+  async deleteNotification(id: string): Promise<INotification> {
+    const notification = await NotificationModel.findOneAndUpdate(
+      { id, deletedAt: null },
+      { $set: { deletedAt: new Date() } },
+      { new: true }
+    );
+
+    if (!notification) {
+      throw new ApiError(404, "Notificação não encontrada.");
+    }
 
     return notification;
   },

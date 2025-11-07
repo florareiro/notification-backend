@@ -32,4 +32,22 @@ export const NotificationController = {
       next(err);
     }
   },
+
+  async remove(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params as { id: string };
+      const removed = await NotificationService.deleteNotification(id);
+
+      // Resposta consistente (200 + objeto com id e deletedAt)
+      res.json({
+        success: true,
+        data: {
+          id: removed.id,
+          deletedAt: removed.deletedAt,
+        },
+      });
+    } catch (err) {
+      next(err);
+    }
+  },
 };
