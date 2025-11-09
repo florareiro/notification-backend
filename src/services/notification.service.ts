@@ -6,9 +6,7 @@ import {
 } from "../validators/notification.validator";
 
 export const NotificationService = {
-  async createNotification(
-    payload: CreateNotificationValidation
-  ): Promise<INotification> {
+  async createNotification(payload: CreateNotificationValidation) {
     const notif = await NotificationModel.create(payload);
     return notif;
   },
@@ -43,21 +41,30 @@ export const NotificationService = {
     };
   },
 
-  async markAsRead(id: string) {
-    const notification = await NotificationModel.findOneAndUpdate(
-      { id, deletedAt: null },
-      { $set: { read: true } },
-      { new: true }
-    );
+  async markAsReadOrUnread(id: string) {
+    const notification = await NotificationModel.findOne({
+      id,
+      deletedAt: null,
+    });
 
     if (!notification) {
       throw new ApiError(404, "Notificação não encontrada.");
     }
 
-    return notification;
+    const newState = !notification.read;
+    notification.read = newState;
+    await notification.save();
+
+    return {
+      id: notification.id,
+      read: newState,
+      message: newState
+        ? "Notificação marcada como lida."
+        : "Notificação marcada como não lida.",
+    };
   },
 
-  async deleteNotification(id: string): Promise<INotification> {
+  async deleteNotification(id: string) {
     const notification = await NotificationModel.findOneAndUpdate(
       { id, deletedAt: null },
       { $set: { deletedAt: new Date() } },

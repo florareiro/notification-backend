@@ -22,10 +22,10 @@ router.get(
 router.patch(
   "/:id/read",
   validate({ params: idParamsSchema }),
-  NotificationController.markRead
+  NotificationController.toggleRead
 );
 router.patch(
-  "/:id",
+  "/delete/:id",
   validate({ params: idParamsSchema }),
   NotificationController.remove
 );

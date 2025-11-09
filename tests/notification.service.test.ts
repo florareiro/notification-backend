@@ -42,7 +42,9 @@ test("marca uma notificação como lida", async () => {
 
   expect(notif.read).toBe(false);
 
-  const updated = await NotificationService.markAsRead(notif._id.toString());
+  const updated = await NotificationService.markAsReadOrUnread(
+    notif.id.toString()
+  );
 
   expect(updated.read).toBe(true);
 });

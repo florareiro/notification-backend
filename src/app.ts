@@ -8,13 +8,10 @@ import { errorHandler } from "./middlewares/errorHandler";
 const app = express();
 app.use(express.json());
 
-// health
 app.get("/health", (_req, res) => res.json({ ok: true }));
 
-// routes
 app.use("/notifications", notificationRoutes);
 
-// error handler
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 4000;
@@ -33,4 +30,4 @@ if (require.main === module) {
   });
 }
 
-export default app; // export para testes
+export default app;

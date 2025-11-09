@@ -6,7 +6,11 @@ export const NotificationController = {
     try {
       const payload = req.body;
       const created = await NotificationService.createNotification(payload);
-      res.status(201).json({ success: true, data: created });
+      res.status(201).json({
+        success: true,
+        message: "Notificação criada com sucesso!",
+        data: created,
+      });
     } catch (err) {
       next(err);
     }
@@ -23,11 +27,15 @@ export const NotificationController = {
     }
   },
 
-  async markRead(req: Request, res: Response, next: NextFunction) {
+  async toggleRead(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params as { id: string };
-      const updated = await NotificationService.markAsRead(id);
-      res.json({ success: true, data: updated });
+      const result = await NotificationService.markAsReadOrUnread(id);
+
+      res.json({
+        success: true,
+        data: result,
+      });
     } catch (err) {
       next(err);
     }
@@ -38,7 +46,6 @@ export const NotificationController = {
       const { id } = req.params as { id: string };
       const removed = await NotificationService.deleteNotification(id);
 
-      // Resposta consistente (200 + objeto com id e deletedAt)
       res.json({
         success: true,
         data: {
