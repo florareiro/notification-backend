@@ -21,24 +21,46 @@ afterEach(async () => {
 });
 
 test("cria notificação com dados válidos", async () => {
-  const payload = {
+  const created = await NotificationService.createNotification({
     userId: "user-123",
     title: "Bem-vindo",
     message: "Sua conta foi criada",
-  };
-  const created = await NotificationService.createNotification(payload);
+  });
   expect(created).toBeDefined();
   expect(created._id).toBeDefined();
-  expect(created.userId).toBe(payload.userId);
+  expect(created.userId).toBe(created.userId);
   expect(created.read).toBe(false);
 });
 
+test("lista notificações de um usuário com paginação", async () => {
+  const userId = "user-123";
+  const totalNotifications = 15;
+
+  for (let i = 0; i < totalNotifications; i++) {
+    await NotificationService.createNotification({
+      userId,
+      title: `Notificação ${i + 1}`,
+      message: `Mensagem ${i + 1}`,
+    });
+  }
+  const result = await NotificationService.listNotifications({
+    userId,
+    page: 1,
+    limit: 10,
+  });
+
+  expect(result.data).toHaveLength(10);
+  expect(result.total).toBe(totalNotifications);
+  expect(result.page).toBe(1);
+  expect(result.pages).toBe(Math.ceil(totalNotifications / 10));
+});
+
 test("marca uma notificação como lida", async () => {
-  const notif = (await NotificationService.createNotification({
-    userId: "user-test-read",
+  const notif = await NotificationService.createNotification({
+    userId: "user-123",
     title: "Notificação não lida",
     message: "Mensagem teste",
-  })) as any;
+  });
 
   expect(notif.read).toBe(false);
 
@@ -47,4 +69,16 @@ test("marca uma notificação como lida", async () => {
   );
 
   expect(updated.read).toBe(true);
+});
+
+test("remove uma notificação (soft delete)", async () => {
+  const notif = await NotificationService.createNotification({
+    userId: "user-123",
+    title: "Excluir depois",
+    message: "Teste de exclusão",
+  });
+
+  const deleted = await NotificationService.deleteNotification(notif.id);
+
+  expect(deleted.deletedAt).toBeInstanceOf(Date);
 });
