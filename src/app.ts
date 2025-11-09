@@ -4,13 +4,16 @@ dotenv.config();
 import notificationRoutes from "./routes/notification.routes";
 import { connectDB } from "./config/db";
 import { errorHandler } from "./middlewares/errorHandler";
+import { setupSwagger } from "./config/swagger";
 
 const app = express();
 app.use(express.json());
 
 app.get("/health", (_req, res) => res.json({ ok: true }));
 
-app.use("/notifications", notificationRoutes);
+app.use("/api/notifications", notificationRoutes);
+
+setupSwagger(app);
 
 app.use(errorHandler);
 
@@ -20,6 +23,7 @@ async function start() {
   await connectDB();
   app.listen(PORT, () => {
     console.log(`Servidor rodando na porta ${PORT}`);
+    console.log(`📘 Documentação Swagger: http://localhost:${PORT}/api-docs`);
   });
 }
 
